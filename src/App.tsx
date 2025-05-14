@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 
 export default function App() {
   const [display, setDisplay] = useState("0");
-  const [activeTab, setActiveTab] = useState("history");
-  const [history, setHistory] = useState<string[]>([]);
-  const [memory, setMemory] = useState<string[]>([]);
-  const [firstOperand, setFirstOperand] = useState<string | null>(null);
-  const [operator, setOperator] = useState<string | null>(null);
-  const [newNumber, setNewNumber] = useState(true);
+  const [activeTab, setActiveTab] = useState("history"); // 记录Tab的状态
+  const [history, setHistory] = useState<string[]>([]); // 计算历史
+  const [memory, setMemory] = useState<string[]>([]); // 计算器内存 
+  const [firstOperand, setFirstOperand] = useState<string | null>(null); // 第一个操作数
+  const [operator, setOperator] = useState<string | null>(null); // 存储当前操作符
+  const [newNumber, setNewNumber] = useState(true); // 是否需要输入新数字
 
+  // 历史记录和内存记录的切换
   const switchTab = (tab: string) => {
     setActiveTab(tab);
   };
 
+  // 处理数字输入
   const handleNumber = (num: string) => {
     if (newNumber) {
       setDisplay(num);
@@ -23,6 +25,9 @@ export default function App() {
     }
   };
 
+  // 处理操作符
+  // 如果当前有操作符且不是新数字，则计算结果
+  // 如果没有操作符，则设置第一个操作数和操作符
   const handleOperator = (op: string) => {
     if (operator && !newNumber) {
       calculate();
@@ -32,8 +37,9 @@ export default function App() {
     setNewNumber(true);
   };
 
+  // 计算结果并更新历史记录
   const calculate = () => {
-    if (!operator || !firstOperand || newNumber) return;
+    if (!operator || !firstOperand || newNumber) return; // 如果没有操作符或第一个操作数，或者是新数字，则不计算
     
     let result: number;
     const a = parseFloat(firstOperand);
@@ -50,25 +56,27 @@ export default function App() {
         result = a * b;
         break;
       case "÷":
-        result = b !== 0 ? a / b : NaN;
+        result = b !== 0 ? a / b : NaN; // 除数不能为0
         break;
       default:
         return;
     }
 
-    const calculation = `${firstOperand} ${operator} ${display} = ${result}`;
-    setHistory([...history, calculation]);
+    const calculation = `${firstOperand} ${operator} ${display} = ${result}`;  // 记录计算过程
+    setHistory([...history, calculation]);  // 更新历史记录
     setDisplay(result.toString());
     setFirstOperand(null);
     setOperator(null);
     setNewNumber(true);
   };
 
+  //  实现CE按钮功能
   const clearDisplay = () => {
     setDisplay("0");
     setNewNumber(true);
   };
 
+  // 实现C按钮功能
   const clearAll = () => {
     setDisplay("0");
     setFirstOperand(null);
@@ -76,6 +84,7 @@ export default function App() {
     setNewNumber(true);
   };
 
+  // 实现小数点按钮功能
   const handleDecimal = () => {
     if (newNumber) {
       setDisplay("0.");
@@ -85,6 +94,8 @@ export default function App() {
     }
   };
 
+  // 实现特殊操作按钮功能，并更新历史记录
+  // 处理平方根、平方、倒数、百分比和正负号
   const handleSpecialOperation = (operation: string) => {
     const num = parseFloat(display);
     let result: number;

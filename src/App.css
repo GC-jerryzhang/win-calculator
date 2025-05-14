@@ -1,16 +1,20 @@
 .calculator {
   display: grid;
+  width: 100%;
   grid-template-columns: minmax(320px, 2fr) minmax(200px, 1fr);
+  grid-template-rows: auto auto 1fr; /* 添加行的定义：头部、显示区、按钮区 */
   min-height: 100vh;
   background: #f0f0f0;
   margin: 2rem auto;
   border-radius: 20px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.1);
   padding: 1.5rem;
+  gap: 1rem; /* 添加网格间距 */
 }
 
 header {
   grid-column: 1 / -1;
+  grid-row: 1; /* 明确指定在第一行 */
   padding: 1rem;
   background: #e6e6e6;
   display: flex;
@@ -35,16 +39,18 @@ header {
 
 .display {
   grid-column: 1;
+  grid-row: 2; /* 指定在第二行 */
   padding: 2rem;
   font-size: 2.5rem;
   text-align: right;
   background: white;
-  margin: 20px 0;
+  margin: 0; /* 移除垂直边距 */
   min-height: 48px;
 }
 
 .side-panel {
   grid-column: 2;
+  grid-row: 2 / span 2; /* 从第二行开始，跨越两行 */
   padding: 1rem;
   background: white;
   border-left: 1px solid #e6e6e6;
@@ -53,6 +59,7 @@ header {
 
 .buttons {
   grid-column: 1;
+  grid-row: 3; /* 指定在第三行 */
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.2rem;
@@ -93,13 +100,17 @@ button:active {
   border-bottom: 1px solid #e6e6e6;
 }
 
+
+/* 适配小屏幕 */
 @media (max-width: 768px) {
   .calculator {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto; /* 修改行的定义 */
   }
   
   .side-panel {
     grid-column: 1;
+    grid-row: 4; /* 在移动端放到最底部 */
     border-left: none;
     border-top: 1px solid #e6e6e6;
   }
