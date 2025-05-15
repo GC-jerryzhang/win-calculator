@@ -1,15 +1,15 @@
 .calculator {
   display: grid;
-  width: 100%;
-  grid-template-columns: minmax(320px, 2fr) minmax(200px, 1fr);
+  width: 100vw;
+  height: 100vh;
+  grid-template-columns: minmax(320px, 1fr) minmax(0, 320px);
   grid-template-rows: auto auto 1fr; /* 添加行的定义：头部、显示区、按钮区 */
-  min-height: 100vh;
   background: #f0f0f0;
-  margin: 2rem auto;
-  border-radius: 20px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.1);
+  margin: 0; /* 移除外边距 */
   padding: 1.5rem;
   gap: 1rem; /* 添加网格间距 */
+  box-sizing: border-box; /* 确保内边距和边框包含在宽度和高度中 */
+  position: relative; /* 使计算器相对定位 */
 }
 
 header {
@@ -51,7 +51,6 @@ header {
 .side-panel {
   grid-column: 2;
   grid-row: 2 / span 2; /* 从第二行开始，跨越两行 */
-  padding: 1rem;
   background: white;
   border-left: 1px solid #e6e6e6;
   overflow-y: auto;
@@ -60,22 +59,26 @@ header {
 .buttons {
   grid-column: 1;
   grid-row: 3; /* 指定在第三行 */
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.2rem;
-  padding: 0;
-  background: none;
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 1%; 
+  padding: 0; 
 }
 
 button {
-  padding: 1.5rem;
-  font-size: 1.25rem;
+  width: 100%;
+  aspect-ratio: 0; /* 保持按钮为矩形 */
+  padding: 0;
+  font-size: clamp(1rem, 2vw, 1.25rem);
   border: none;
   background: white;
   cursor: pointer;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  transition: background 0.2s;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 button:hover {
@@ -100,18 +103,73 @@ button:active {
   border-bottom: 1px solid #e6e6e6;
 }
 
+/* 添加历史记录弹出层样式 */
+.history-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.history-popup.show {
+  display: flex;
+}
+
+.history-popup-content {
+  background: white;
+  padding: 0.5rem;
+  border-radius: 20px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.history-popup-content h2 {
+  margin: auto;
+  padding: auto;
+}
+
 
 /* 适配小屏幕 */
 @media (max-width: 768px) {
   .calculator {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto; /* 修改行的定义 */
   }
   
   .side-panel {
-    grid-column: 1;
-    grid-row: 4; /* 在移动端放到最底部 */
-    border-left: none;
-    border-top: 1px solid #e6e6e6;
+    display: none; /* 隐藏侧边栏 */
+  }
+  
+  .history-trigger {
+    display: block;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+  }
+}
+
+/* 添加媒体查询以处理不同尺寸的屏幕 */
+@media screen and (max-height: 600px) {
+  .calculator {
+    height: 95vh; /* 在较小的屏幕上使用视口高度 */
+    margin: 1rem auto;
+  }
+  
+  .display {
+    padding: 1rem;
+    font-size: 2rem;
+  }
+  
+  button {
+    padding: 1rem;
+    font-size: 1rem;
   }
 }

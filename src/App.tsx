@@ -9,6 +9,12 @@ export default function App() {
   const [firstOperand, setFirstOperand] = useState<string | null>(null); // 第一个操作数
   const [operator, setOperator] = useState<string | null>(null); // 存储当前操作符
   const [newNumber, setNewNumber] = useState(true); // 是否需要输入新数字
+  const [showHistoryPopup, setShowHistoryPopup] = useState(false);
+
+  // 添加历史记录弹出层切换函数
+  const toggleHistoryPopup = () => {
+    setShowHistoryPopup(!showHistoryPopup);
+  };
 
   // 历史记录和内存记录的切换
   const switchTab = (tab: string) => {
@@ -127,66 +133,84 @@ export default function App() {
   };
 
   return (
-    <div className="calculator">
-      <header>
-        <span>Standard</span>
-        <div className="tabs">
-          <span 
-            className={activeTab === "history" ? "active" : ""}
-            onClick={() => switchTab("history")}
-          >
-            History
-          </span>
-          <span 
-            className={activeTab === "memory" ? "active" : ""}
-            onClick={() => switchTab("memory")}
-          >
-            Memory
-          </span>
+    <>
+      <div className="calculator">
+        <header>
+          <span>Standard</span>
+          <div className="tabs">
+            <span 
+              className={activeTab === "history" ? "active" : ""}
+              onClick={() => {
+                if (window.innerWidth <= 768) {
+                  toggleHistoryPopup();
+                } else {
+                  switchTab("history");
+                }
+              }}
+            >
+              History
+            </span>
+            <span 
+              className={activeTab === "memory" ? "active" : ""}
+              onClick={() => switchTab("memory")}
+            >
+              Memory
+            </span>
+          </div>
+        </header>
+        <div className="display">{display}</div>
+        <div className="side-panel">
+          {activeTab === "history" ? (
+            <div className="history-list">
+              {history.map((item, index) => (
+                <div key={index} className="history-item">{item}</div>
+              ))}
+            </div>
+          ) : (
+            <div className="memory-list">
+              {memory.map((item, index) => (
+                <div key={index} className="memory-item">{item}</div>
+              ))}
+            </div>
+          )}
         </div>
-      </header>
-      <div className="display">{display}</div>
-      <div className="side-panel">
-        {activeTab === "history" ? (
-          <div className="history-list">
-            {history.map((item, index) => (
-              <div key={index} className="history-item">{item}</div>
-            ))}
-          </div>
-        ) : (
-          <div className="memory-list">
-            {memory.map((item, index) => (
-              <div key={index} className="memory-item">{item}</div>
-            ))}
-          </div>
-        )}
+        <div className="buttons">
+          <button onClick={() => handleSpecialOperation("%")}>%</button>
+          <button onClick={clearDisplay}>CE</button>
+          <button onClick={clearAll}>C</button>
+          <button onClick={() => setDisplay(display.slice(0, -1) || "0")}>←</button>
+          <button onClick={() => handleSpecialOperation("⅟x")}>⅟x</button>
+          <button onClick={() => handleSpecialOperation("x²")}>x²</button>
+          <button onClick={() => handleSpecialOperation("√x")}>√x</button>
+          <button onClick={() => handleOperator("÷")}>÷</button>
+          <button onClick={() => handleNumber("7")}>7</button>
+          <button onClick={() => handleNumber("8")}>8</button>
+          <button onClick={() => handleNumber("9")}>9</button>
+          <button onClick={() => handleOperator("×")}>×</button>
+          <button onClick={() => handleNumber("4")}>4</button>
+          <button onClick={() => handleNumber("5")}>5</button>
+          <button onClick={() => handleNumber("6")}>6</button>
+          <button onClick={() => handleOperator("-")}>-</button>
+          <button onClick={() => handleNumber("1")}>1</button>
+          <button onClick={() => handleNumber("2")}>2</button>
+          <button onClick={() => handleNumber("3")}>3</button>
+          <button onClick={() => handleOperator("+")}>+</button>
+          <button onClick={() => handleSpecialOperation("+/-")}>+/-</button>
+          <button onClick={() => handleNumber("0")}>0</button>
+          <button onClick={handleDecimal}>.</button>
+          <button className="equals" onClick={calculate}>=</button>
+        </div>
       </div>
-      <div className="buttons">
-        <button onClick={() => handleSpecialOperation("%")}>%</button>
-        <button onClick={clearDisplay}>CE</button>
-        <button onClick={clearAll}>C</button>
-        <button onClick={() => setDisplay(display.slice(0, -1) || "0")}>←</button>
-        <button onClick={() => handleSpecialOperation("⅟x")}>⅟x</button>
-        <button onClick={() => handleSpecialOperation("x²")}>x²</button>
-        <button onClick={() => handleSpecialOperation("√x")}>√x</button>
-        <button onClick={() => handleOperator("÷")}>÷</button>
-        <button onClick={() => handleNumber("7")}>7</button>
-        <button onClick={() => handleNumber("8")}>8</button>
-        <button onClick={() => handleNumber("9")}>9</button>
-        <button onClick={() => handleOperator("×")}>×</button>
-        <button onClick={() => handleNumber("4")}>4</button>
-        <button onClick={() => handleNumber("5")}>5</button>
-        <button onClick={() => handleNumber("6")}>6</button>
-        <button onClick={() => handleOperator("-")}>-</button>
-        <button onClick={() => handleNumber("1")}>1</button>
-        <button onClick={() => handleNumber("2")}>2</button>
-        <button onClick={() => handleNumber("3")}>3</button>
-        <button onClick={() => handleOperator("+")}>+</button>
-        <button onClick={() => handleSpecialOperation("+/-")}>+/-</button>
-        <button onClick={() => handleNumber("0")}>0</button>
-        <button onClick={handleDecimal}>.</button>
-        <button className="equals" onClick={calculate}>=</button>
+      {/* 添加历史记录弹出层 */}
+      <div className={`history-popup ${showHistoryPopup ? 'show' : ''}`} onClick={toggleHistoryPopup}>
+        <div className="history-popup-content" onClick={e => e.stopPropagation()}>
+          <h2>History</h2>
+          {history.map((item, index) => (
+            <div key={index} className="history-item">{item}</div>
+          ))}
+          {history.length === 0 && <p>No history yet</p>}
+        </div>
       </div>
-    </div>
+    </>      
   );
 }
